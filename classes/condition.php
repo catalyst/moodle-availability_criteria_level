@@ -156,7 +156,7 @@ class condition extends \core_availability\condition {
         $inf->activity = $cm->name;
         $inf->level = $level->definition;
         $inf->criteria = $criteria->description;
-        return get_string(($not ? '_not' : '') . 'requires_criteria', 'availability_criteria_level', $inf);
+        return get_string(($not ? 'not_' : '') . 'requires_criteria', 'availability_criteria_level', $inf);
     }
 
     /**
