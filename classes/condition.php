@@ -38,15 +38,15 @@ class condition extends \core_availability\condition {
     /**
      * @var int Grade item ID
      */
-    protected int $gradeitemid;
+    protected $gradeitemid;
     /**
      * @var int Criterion ID
      */
-    protected int $criterion;
+    protected $criterion;
     /**
      * @var int Criterion level ID
      */
-    protected int $level;
+    protected $level;
 
     /**
      * Condition constructor.
