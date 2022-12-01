@@ -1,8 +1,6 @@
-<a href="https://github.com/catalyst/moodle-availability_criteria_level/actions?query=workflow%3A%22Run+all+tests%22">
-<img src="https://github.com/catalyst/moodle-availability_criteria_level/workflows/Run%20all%20tests/badge.svg">
-</a>
-
 # moodle-availability_criteria_level
+
+![GitHub Workflow Status (main)](https://img.shields.io/github/workflow/status/catalyst/moodle-availability_criteria_level/ci/main?label=ci)
 
 Availability condition based on the graded level of criterion.
 
