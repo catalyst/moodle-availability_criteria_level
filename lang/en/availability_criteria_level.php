@@ -28,6 +28,7 @@ $string['privacy:metadata'] = 'The Restriction by criteria level plugin does not
 $string['description'] = 'Require students to achieve a specified criteria level.';
 $string['title'] = 'Criteria Level';
 $string['requires_criteria'] = 'Requires <b>{$a->level}</b> in <b>{$a->criteria}</b> from <b>{$a->activity}</b>';
+$string['not_requires_criteria'] = 'Requires <b>{$a->level}</b> was not given in <b>{$a->criteria}</b> from <b>{$a->activity}</b>';
 $string['chooselevel'] = 'Choose level';
 $string['choosecriteria'] = 'Choose criteria';
 $string['error_loading_requirements'] = 'Error with criteria level restriction';

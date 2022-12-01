@@ -17,7 +17,6 @@
 namespace availability_criteria_level;
 
 use core_availability\info;
-use gradingform_instance;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,10 +35,24 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  */
 class condition extends \core_availability\condition {
 
-    protected $gradeitemid;
-    protected $criterion;
-    protected $level;
+    /**
+     * @var int Grade item ID
+     */
+    protected int $gradeitemid;
+    /**
+     * @var int Criterion ID
+     */
+    protected int $criterion;
+    /**
+     * @var int Criterion level ID
+     */
+    protected int $level;
 
+    /**
+     * Condition constructor.
+     *
+     * @param \stdClass $structure
+     */
     public function __construct($structure) {
         if (isset($structure->gradeitemid) && is_int($structure->gradeitemid)) {
             $this->gradeitemid = $structure->gradeitemid;
@@ -58,36 +71,46 @@ class condition extends \core_availability\condition {
         }
     }
 
+    /**
+     * Checks if the item is available, determined by whether the given user was awarded
+     * the set level in a grade item criterion.
+     *
+     * @param bool $not Set true if we are inverting the condition
+     * @param info $info Item we are checking
+     * @param bool $grabthelot
+     * @param int $userid User ID to check availability for
+     * @return bool True if available
+     */
     public function is_available($not, info $info, $grabthelot, $userid) {
         global $DB;
 
         $gradeitem = \grade_item::fetch(['id' => $this->gradeitemid]);
         $cm = get_coursemodule_from_instance($gradeitem->itemmodule, $gradeitem->iteminstance, $gradeitem->courseid);
         if ($cm == null) {
-            return false;
+            return $not != false;
         }
         $context = \context_module::instance($cm->id);
 
         $criteria = $DB->get_record('gradingform_rubric_criteria', ['id' => $this->criterion]);
         if ($criteria == null) {
-            return false;
+            return $not != false;
         }
         $level = $DB->get_record('gradingform_rubric_levels', ['id' => $this->level]);
         if ($level == null) {
-            return false;
+            return $not != false;
         }
 
         $assign = new \assign($context, $cm, false);
         $usergrade = $assign->get_user_grade($userid, false);
         if (!$usergrade) {
-            return false;
+            return $not != false;
         }
 
-        $gradinginstance = $DB->get_record('grading_instances', array('definitionid'  => $criteria->definitionid,
+        $gradinginstance = $DB->get_record('grading_instances', array('definitionid' => $criteria->definitionid,
             'itemid' => $usergrade->id,
-            'status'  => \gradingform_instance::INSTANCE_STATUS_ACTIVE));
+            'status' => \gradingform_instance::INSTANCE_STATUS_ACTIVE));
         if ($gradinginstance == null) {
-            return false;
+            return $not != false;
         }
 
         $fillings = $DB->get_records('gradingform_rubric_fillings',
@@ -96,13 +119,21 @@ class condition extends \core_availability\condition {
 
         foreach ($fillings as $filling) {
             if ($filling->levelid == $this->level) {
-                return true;
+                return $not != true;
             }
         }
 
-        return false;
+        return $not != false;
     }
 
+    /**
+     * Returns a string describing the restriction.
+     *
+     * @param bool $full Set true if this is the 'full information' view
+     * @param bool $not Set true if we are inverting the condition
+     * @param info $info Item we are checking
+     * @return \lang_string|string
+     */
     public function get_description($full, $not, info $info) {
         global $DB;
 
@@ -125,24 +156,29 @@ class condition extends \core_availability\condition {
         $inf->activity = $cm->name;
         $inf->level = $level->definition;
         $inf->criteria = $criteria->description;
-        return get_string('requires_criteria', 'availability_criteria_level', $inf);
+        return get_string(($not ? '_not' : '') . 'requires_criteria', 'availability_criteria_level', $inf);
     }
 
+    /**
+     * Returns the settings of this condition as a string for debugging.
+     *
+     * @return string
+     */
     protected function get_debug_string() {
         return $this->gradeitemid . '#' . $this->criterion . '-' . $this->level;
     }
 
+    /**
+     * Saves condition settings to a structure object.
+     *
+     * @return \stdClass Structure object
+     */
     public function save() {
-        $result = (object)array('type' => 'criteria_level');
-        if ($this->gradeitemid) {
-            $result->gradeitemid = $this->gradeitemid;
-        }
-        if ($this->criterion) {
-            $result->criterion = $this->criterion;
-        }
-        if ($this->level) {
-            $result->level = $this->level;
-        }
+        $result = new \stdClass();
+        $result->type = 'criteria_level';
+        $result->gradeitemid = $this->gradeitemid ?? null;
+        $result->criterion = $this->criterion ?? null;
+        $result->level = $this->level ?? null;
         return $result;
     }
 }

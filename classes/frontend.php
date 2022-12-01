@@ -25,10 +25,21 @@ namespace availability_criteria_level;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class frontend extends \core_availability\frontend {
+
+    /**
+     * Get component level language string identifiers that will be used in JS.
+     */
     protected function get_javascript_strings() {
         return array('title', 'choosecriteria', 'chooselevel');
     }
 
+    /**
+     * Get grade items and their corresponding criteria with levels to be passed to the JS.
+     *
+     * @param \stdClass $course Course object
+     * @param \cm_info|null $cm Course module being edited (null if none)
+     * @param \section_info|null $section Course section being edited (null if none)
+     */
     protected function get_javascript_init_params($course, \cm_info $cm = null,
         \section_info $section = null) {
         global $CFG, $DB;
