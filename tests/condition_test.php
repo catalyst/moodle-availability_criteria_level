@@ -16,8 +16,6 @@
 
 namespace availability_criteria_level;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Unit tests for criteria level condition.
  *
@@ -45,6 +43,8 @@ class condition_test extends \advanced_testcase {
 
     /**
      * Tests constructing and using criteria_level condition as part of a tree.
+     *
+     * @covers \availability_criteria_level\condition::is_available()
      */
     public function test_in_tree() {
         global $DB, $USER;
@@ -112,15 +112,8 @@ class condition_test extends \advanced_testcase {
             'definition' => 'excellent',
             'definitionformat' => 0
         );
-        $rubriclevel3 = array(
-            'criterionid' => $criterionid,
-            'score' => 0,
-            'definition' => 'fail',
-            'definitionformat' => 0
-        );
         $levelid1 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel1);
-        $levelid2 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel2);
-        $levelid3 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel3);
+        $DB->insert_record('gradingform_rubric_levels', $rubriclevel2);
 
         $gradeitem = $DB->get_record('grade_items', ['courseid' => $course->id, 'iteminstance' => $assigninstance->id]);
 
@@ -160,7 +153,7 @@ class condition_test extends \advanced_testcase {
         $feedbackeditorparams = array('text' => '', 'format' => 1);
         $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
 
-        $gradedata = (object)$feedbackpluginparams;
+        $gradedata = (object) $feedbackpluginparams;
         $gradedata->addattempt = true;
         $gradedata->attemptnumber = -1;
         $gradedata->workflowstate = 'released';
@@ -191,9 +184,11 @@ class condition_test extends \advanced_testcase {
 
     /**
      * Tests the save() function.
+     *
+     * @covers \availability_criteria_level\condition::save()
      */
     public function test_save() {
-        $structure = (object)['gradeitemid' => 2, 'criterion' => 3, 'level' => 4];
+        $structure = (object) ['gradeitemid' => 2, 'criterion' => 3, 'level' => 4];
         $cond = new condition($structure);
         $structure->type = 'criteria_level';
         $this->assertEquals($structure, $cond->save());

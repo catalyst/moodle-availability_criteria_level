@@ -16,8 +16,6 @@
 
 namespace availability_criteria_level\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for availability_criteria_level implementing null_provider.
  *
