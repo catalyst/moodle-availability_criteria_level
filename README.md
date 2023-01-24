@@ -1,6 +1,6 @@
 # moodle-availability_criteria_level
 
-![GitHub Workflow Status (main)](https://img.shields.io/github/workflow/status/catalyst/moodle-availability_criteria_level/ci/main?label=ci)
+![GitHub Workflow Status (main)](https://img.shields.io/github/actions/workflow/status/catalyst/moodle-availability_criteria_level/ci.yml?branch=main)
 
 Availability condition based on the graded level of criterion.
 
