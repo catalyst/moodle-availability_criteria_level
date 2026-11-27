@@ -23,12 +23,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['choosecriteria'] = 'Choose criteria';
+$string['chooselevel'] = 'Choose level';
+$string['description'] = 'Require students to achieve a specified criteria level.';
+$string['error_loading_requirements'] = 'Error with criteria level restriction';
+$string['not_requires_criteria'] = 'Requires <b>{$a->level}</b> was not given in <b>{$a->criteria}</b> from <b>{$a->activity}</b>';
 $string['pluginname'] = 'Restriction by criteria level';
 $string['privacy:metadata'] = 'The Restriction by criteria level plugin does not store any personal data.';
-$string['description'] = 'Require students to achieve a specified criteria level.';
-$string['title'] = 'Criteria Level';
 $string['requires_criteria'] = 'Requires <b>{$a->level}</b> in <b>{$a->criteria}</b> from <b>{$a->activity}</b>';
-$string['not_requires_criteria'] = 'Requires <b>{$a->level}</b> was not given in <b>{$a->criteria}</b> from <b>{$a->activity}</b>';
-$string['chooselevel'] = 'Choose level';
-$string['choosecriteria'] = 'Choose criteria';
-$string['error_loading_requirements'] = 'Error with criteria level restriction';
+$string['title'] = 'Criteria Level';

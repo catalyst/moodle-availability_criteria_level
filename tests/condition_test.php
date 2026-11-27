@@ -24,20 +24,21 @@ namespace availability_criteria_level;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_test extends \advanced_testcase {
-
+final class condition_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/availability/tests/fixtures/mock_info.php');
+        parent::setUpBeforeClass();
     }
 
     /**
      * Load required classes.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
@@ -46,7 +47,7 @@ class condition_test extends \advanced_testcase {
      *
      * @covers \availability_criteria_level\condition::is_available()
      */
-    public function test_in_tree() {
+    public function test_in_tree(): void {
         global $DB, $USER;
 
         $this->setAdminUser();
@@ -69,16 +70,16 @@ class condition_test extends \advanced_testcase {
 
         // Create advanced grading data.
         // Create grading area.
-        $gradingarea = array(
+        $gradingarea = [
             'contextid' => $context->id,
             'component' => 'mod_assign',
             'areaname' => 'submissions',
-            'activemethod' => 'rubric'
-        );
+            'activemethod' => 'rubric',
+        ];
         $areaid = $DB->insert_record('grading_areas', $gradingarea);
 
         // Create a rubric grading definition.
-        $rubricdefinition = array(
+        $rubricdefinition = [
             'areaid' => $areaid,
             'method' => 'rubric',
             'name' => 'test',
@@ -88,30 +89,30 @@ class condition_test extends \advanced_testcase {
             'usercreated' => $USER->id,
             'timemodified' => 1,
             'usermodified' => $USER->id,
-            'timecopied' => 0
-        );
+            'timecopied' => 0,
+        ];
         $definitionid = $DB->insert_record('grading_definitions', $rubricdefinition);
 
         // Create a criterion with a level.
-        $rubriccriteria = array(
+        $rubriccriteria = [
             'definitionid' => $definitionid,
             'sortorder' => 1,
             'description' => 'Demonstrate an understanding of disease control',
-            'descriptionformat' => 0
-        );
+            'descriptionformat' => 0,
+        ];
         $criterionid = $DB->insert_record('gradingform_rubric_criteria', $rubriccriteria);
-        $rubriclevel1 = array(
+        $rubriclevel1 = [
             'criterionid' => $criterionid,
             'score' => 50,
             'definition' => 'pass',
-            'definitionformat' => 0
-        );
-        $rubriclevel2 = array(
+            'definitionformat' => 0,
+        ];
+        $rubriclevel2 = [
             'criterionid' => $criterionid,
             'score' => 100,
             'definition' => 'excellent',
-            'definitionformat' => 0
-        );
+            'definitionformat' => 0,
+        ];
         $levelid1 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel1);
         $DB->insert_record('gradingform_rubric_levels', $rubriclevel2);
 
@@ -128,8 +129,8 @@ class condition_test extends \advanced_testcase {
                     'gradeitemid' => (int) $gradeitem->id,
                     'criterion' => (int) $criterionid,
                     'level' => (int) $levelid1,
-                ]
-            ]
+                ],
+            ],
         ];
         $tree = new \core_availability\tree($structure);
 
@@ -138,19 +139,19 @@ class condition_test extends \advanced_testcase {
         $this->assertFalse($result->is_available());
 
         // Create the filling.
-        $student1filling = array(
+        $student1filling = [
             'criterionid' => $criterionid,
             'levelid' => $levelid1,
             'remark' => 'well done you passed',
-            'remarkformat' => 0
-        );
+            'remarkformat' => 0,
+        ];
 
-        $student1criteria = array(array('criterionid' => $criterionid, 'fillings' => array($student1filling)));
-        $student1advancedgradingdata = array('rubric' => array('criteria' => $student1criteria));
+        $student1criteria = [['criterionid' => $criterionid, 'fillings' => [$student1filling]]];
+        $student1advancedgradingdata = ['rubric' => ['criteria' => $student1criteria]];
 
-        $feedbackpluginparams = array();
+        $feedbackpluginparams = [];
         $feedbackpluginparams['files_filemanager'] = 0;
-        $feedbackeditorparams = array('text' => '', 'format' => 1);
+        $feedbackeditorparams = ['text' => '', 'format' => 1];
         $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
 
         $gradedata = (object) $feedbackpluginparams;
@@ -161,10 +162,10 @@ class condition_test extends \advanced_testcase {
         $gradedata->grade = 0;
 
         if (!empty($student1advancedgradingdata)) {
-            $advancedgrading = array();
+            $advancedgrading = [];
             $criteria = reset($student1advancedgradingdata);
             foreach ($criteria as $key => $criterion) {
-                $details = array();
+                $details = [];
                 foreach ($criterion as $value) {
                     foreach ($value['fillings'] as $filling) {
                         $details[$value['criterionid']] = $filling;
@@ -187,11 +188,10 @@ class condition_test extends \advanced_testcase {
      *
      * @covers \availability_criteria_level\condition::save()
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object) ['gradeitemid' => 2, 'criterion' => 3, 'level' => 4];
         $cond = new condition($structure);
         $structure->type = 'criteria_level';
         $this->assertEquals($structure, $cond->save());
     }
-
 }
