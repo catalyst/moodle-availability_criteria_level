@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class condition extends \core_availability\condition {
-
     /**
      * @var int Grade item ID
      */
@@ -106,15 +105,16 @@ class condition extends \core_availability\condition {
             return $not != false;
         }
 
-        $gradinginstance = $DB->get_record('grading_instances', array('definitionid' => $criteria->definitionid,
+        $gradinginstance = $DB->get_record('grading_instances', ['definitionid' => $criteria->definitionid,
             'itemid' => $usergrade->id,
-            'status' => \gradingform_instance::INSTANCE_STATUS_ACTIVE));
+            'status' => \gradingform_instance::INSTANCE_STATUS_ACTIVE]);
         if ($gradinginstance == null) {
             return $not != false;
         }
 
-        $fillings = $DB->get_records('gradingform_rubric_fillings',
-            array('instanceid' => $gradinginstance->id, 'criterionid' => $criteria->id)
+        $fillings = $DB->get_records(
+            'gradingform_rubric_fillings',
+            ['instanceid' => $gradinginstance->id, 'criterionid' => $criteria->id]
         );
 
         foreach ($fillings as $filling) {

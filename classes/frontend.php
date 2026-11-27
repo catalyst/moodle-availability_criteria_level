@@ -25,12 +25,11 @@ namespace availability_criteria_level;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class frontend extends \core_availability\frontend {
-
     /**
      * Get component level language string identifiers that will be used in JS.
      */
     protected function get_javascript_strings() {
-        return array('title', 'choosecriteria', 'chooselevel');
+        return ['title', 'choosecriteria', 'chooselevel'];
     }
 
     /**
@@ -40,33 +39,38 @@ class frontend extends \core_availability\frontend {
      * @param \cm_info|null $cm Course module being edited (null if none)
      * @param \section_info|null $section Course section being edited (null if none)
      */
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-        \section_info $section = null) {
+    protected function get_javascript_init_params(
+        $course,
+        \cm_info $cm = null,
+        \section_info $section = null
+    ) {
         global $CFG, $DB;
         require_once($CFG->libdir . '/gradelib.php');
         require_once($CFG->dirroot . '/course/lib.php');
 
-        $gradeoptions = array();
-        $items = \grade_item::fetch_all(array('courseid' => $course->id));
+        $gradeoptions = [];
+        $items = \grade_item::fetch_all(['courseid' => $course->id]);
         // For some reason the fetch_all things return null if none.
-        $items = $items ? $items : array();
+        $items = $items ? $items : [];
         foreach ($items as $id => $item) {
             // Don't include the grade item if it's linked with a module that is being deleted.
             if (course_module_instance_pending_deletion($item->courseid, $item->itemmodule, $item->iteminstance)) {
                 continue;
             }
-            if ($cm && $cm->instance == $item->iteminstance
+            if (
+                $cm && $cm->instance == $item->iteminstance
                 && $cm->modname == $item->itemmodule
-                && $item->itemtype == 'mod') {
+                && $item->itemtype == 'mod'
+            ) {
                 continue;
             }
 
             $context = $item->get_context();
-            $area = $DB->get_record('grading_areas', array('contextid' => $context->id));
+            $area = $DB->get_record('grading_areas', ['contextid' => $context->id]);
             if ($area == null) {
                 continue;
             }
-            $definition = $DB->get_record('grading_definitions', array('areaid' => $area->id, 'method' => $area->activemethod));
+            $definition = $DB->get_record('grading_definitions', ['areaid' => $area->id, 'method' => $area->activemethod]);
             if ($definition == null) {
                 continue;
             }
@@ -86,12 +90,12 @@ class frontend extends \core_availability\frontend {
 
             $criteria = array_values($criteria);
 
-            $gradeoptions[$id] = array('id' => $id, 'name' => $item->get_name(true), 'criteria' => $criteria);
+            $gradeoptions[$id] = ['id' => $id, 'name' => $item->get_name(true), 'criteria' => $criteria];
         }
         asort($gradeoptions);
 
         // Change to JS array format and return.
-        $gradeitems = array();
+        $gradeitems = [];
         foreach ($gradeoptions as $obj) {
             $gradeitems[] = (object) $obj;
         }
